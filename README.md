@@ -1,4 +1,4 @@
-# Helakuru News Bot 📢
+# Helakuru News Bot V1.2 📢
 
 <p>Stay up-to-date with the latest news from Helakuru Esana directly on your Discord server! This bot automatically fetches and shares real-time news updates, complete with images, summaries, and links to full articles. Perfect for keeping your community informed and engaged with important updates.</p>
 
