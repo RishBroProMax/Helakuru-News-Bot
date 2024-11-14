@@ -1,10 +1,18 @@
-# Helakuru News Bot V1.2 📢
+# <p align="center">Helakuru News Bot V1.4 Alpha 📢</p>
 
-![Helakuru News Bot Logo](logo.png)  <!-- Replace with your logo's actual URL -->
+<p align="center">
+  <img src="logo.jpg" alt="Helakuru News Bot Logo" width="250" height="250" style="border-radius: 50%;" />
+</p>
 
-## [Add Me to Your Server](https://discord.com/oauth2/authorize?client_id=1306259513090769027&permissions=277025392704&integration_type=0&scope=bot)
+<p align="center">
+  <a href="https://discord.com/oauth2/authorize?client_id=1306259513090769027&permissions=277025392704&integration_type=0&scope=bot">
+    <img src="https://img.shields.io/badge/Add%20Me%20to%20Your%20Server-7289DA?style=for-the-badge&logo=discord&logoColor=white" alt="Add Me to Your Server" />
+  </a>
+</p>
 
-Stay up-to-date with the latest news from **Helakuru Esana** directly on your Discord server! This bot automatically fetches and shares real-time news updates, complete with images, summaries, and links to full articles. Perfect for keeping your community informed and engaged with important updates.
+<p align="center">
+  Stay up-to-date with the latest news from <strong>Helakuru Esana</strong> directly on your Discord server! This bot automatically fetches and shares real-time news updates, complete with images, summaries, and links to full articles. Perfect for keeping your community informed and engaged with important updates.
+</p>
 
 ### Features 🚀
 
@@ -15,6 +23,7 @@ Stay up-to-date with the latest news from **Helakuru Esana** directly on your Di
 - **Flexible Setup:** Easy to configure with simple commands and built-in error handling.
 
 ### Commands 📕
+<p align="center">
 | Command             | Description                                               |
 |---------------------|-----------------------------------------------------------|
 | `!setnews`          | Sets the current channel to receive news updates (Admin). |
@@ -25,6 +34,7 @@ Stay up-to-date with the latest news from **Helakuru Esana** directly on your Di
 | `!newshelp`         | Shows the help message with all commands.                 |
 | `!ping`             | Checks the bot latency.                                   |
 | `!refresh`          | Manually checks for the latest news.                      |
+</p>
 
 ### How to Get Started 🛠️
 
@@ -55,4 +65,6 @@ Once the setup is done, your server will start receiving **Helakuru Esana** news
 
 ---
 
-Feel free to contribute to this bot by reporting bugs or submitting new features. If you'd like to request a feature or need support, contact me via Discord at **Rishmika Sandanu#1234**.
+<p align="center">
+Feel free to contribute to this bot by reporting bugs or submitting new features. If you'd like to request a feature or need support, contact me via Discord at **ImRishmika**.
+</p>
