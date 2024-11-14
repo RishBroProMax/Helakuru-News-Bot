@@ -10,6 +10,19 @@
 <li>Customizable Commands: Admins can set and unregister channels, check status, and view the bot's latency.</li>
 <li>Flexible Setup: Easy to configure with simple commands and built-in error handling.</li>
 
+## Commands 📕
+| Command          | Description                                               |
+|------------------|-----------------------------------------------------------|
+| `!setnews`       | Sets the current channel to receive news updates (Admin). |
+| `!unregisternews`| Removes the channel from receiving updates (Admin).       |
+| `!newsnotify on/off` | Enables/disables DM notifications for users.           |
+| `!newsstatus`    | Shows the current configuration of news updates.          |
+| `!news`          | Sends a test news message.                                |
+| `!newshelp`      | Shows the help message with all commands.                 |
+| `!ping`          | Checks the bot latency.                                   |
+| `!refresh`       | Manually checks for the latest news.                      |
+
+
 ## Technical Details 🧑‍💻
 
 <li>Platform: Discord.js v14, powered by Node.js.</li>
