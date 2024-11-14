@@ -12,22 +12,15 @@ const client = new Client({
     ],
 });
 
+const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';  // Replace with your actual bot token
 let serverChannels = {};  // Stores server-specific channels for news updates
 let userNotifications = {};  // Stores users who opted for DM notifications
 let lastNewsId = 106207;  // Initialize from last known news ID
 const prefix = '!';
 
-const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';  // Replace with your actual bot token
+client.once('ready', async () => {
+    console.log(`🚀 Initializing ${client.user.tag}...`);
 
-client.on('ready', async () => {
-    // Log messages in a sequence with delays to simulate a loading process
-    console.log(`
-    ╔══════════════════════════════════════╗
-    ║ 🚀 Initializing ${client.user.tag}...      ║
-    ╚══════════════════════════════════════╝
-    `);
-
-    // Array of loading messages
     const loadingMessages = [
         'Connecting to Helakuru Web 🖥️...',
         'Fetching latest news data 📡...',
@@ -37,24 +30,16 @@ client.on('ready', async () => {
         'Almost ready to go! 🔥'
     ];
 
-    // Display each loading message with a delay
     for (const message of loadingMessages) {
         await new Promise(resolve => setTimeout(resolve, 1500));  // 1.5-second delay
         console.log(message);
     }
 
-    // Final message indicating bot is fully online
-    console.log(`
-    ╔═════════════════════════════════════════╗
-    ║ ✅ Bot ${client.user.tag} is now online!      ║
-    ║   Watching Helakuru Esana News 📰           ║
-    ╚═════════════════════════════════════════╝
-    `);
-
-    // Set bot activity after loading sequence
+    console.log(`✅ ${client.user.tag} is now online and ready to send Helakuru Esana News 📰`);
     client.user.setActivity('Helakuru Esana News 📰', { type: 'WATCHING' });
 });
 
+// Function to fetch and send latest news
 async function fetchLatestNews(sendToAll = true) {
     try {
         const newsUrl = `https://www.helakuru.lk/esana/news/${lastNewsId + 1}`;
@@ -66,7 +51,7 @@ async function fetchLatestNews(sendToAll = true) {
         const newsImage = $('meta[property="og:image"]').attr('content') || "";
 
         if (newsTitle && newsContent) {
-            lastNewsId += 1;
+            lastNewsId += 1;  // Update to next news ID only if a new article was fetched
 
             const embed = new EmbedBuilder()
                 .setTitle(`📰 ${newsTitle}`)
@@ -87,9 +72,7 @@ async function fetchLatestNews(sendToAll = true) {
                 for (const guildId in serverChannels) {
                     try {
                         const channel = await client.channels.fetch(serverChannels[guildId]);
-                        if (channel) {
-                            await channel.send({ embeds: [embed], components: [row] });
-                        }
+                        if (channel) await channel.send({ embeds: [embed], components: [row] });
                     } catch (error) {
                         console.error(`⚠️ Error sending news to channel in guild ${guildId}:`, error);
                     }
@@ -98,9 +81,7 @@ async function fetchLatestNews(sendToAll = true) {
                 for (const userId in userNotifications) {
                     try {
                         const user = await client.users.fetch(userId);
-                        if (user) {
-                            await user.send({ embeds: [embed], components: [row] });
-                        }
+                        if (user) await user.send({ embeds: [embed], components: [row] });
                     } catch (error) {
                         console.error(`⚠️ Error sending news to user ${userId}:`, error);
                     }
@@ -116,7 +97,7 @@ async function fetchLatestNews(sendToAll = true) {
     }
 }
 
-// Schedule to check for new news every 5 minutes
+// Schedule news fetching every 5 minutes
 cron.schedule('*/5 * * * *', fetchLatestNews);
 
 client.on('messageCreate', async (message) => {
@@ -188,6 +169,11 @@ client.on('messageCreate', async (message) => {
                 message.reply('🔄 Bot refreshed and latest news checked!');
                 break;
 
+            case 'debug':
+                await fetchLatestNews(true);
+                message.reply('🐞 Debugging mode activated: Latest news sent to all registered channels and users.');
+                break;
+
             case 'newshelp':
                 const helpEmbed = new EmbedBuilder()
                     .setTitle('📢 Helakuru Esana News Bot Commands')
@@ -199,9 +185,10 @@ client.on('messageCreate', async (message) => {
                         { name: '!newsnotify', value: 'Enable or disable direct message notifications for yourself.' },
                         { name: '!newsstatus', value: 'Show the current configuration of news updates.' },
                         { name: '!news', value: 'Send a news message to verify setup.' },
-                        { name: '!newshelp', value: 'Show this help message with all commands.' },
                         { name: '!ping', value: 'Check the bot latency.' },
-                        { name: '!refresh', value: 'Manually check and send the latest news to registered channels and DMs.' }
+                        { name: '!refresh', value: 'Manually check and send the latest news to registered channels and DMs.' },
+                        { name: '!debug', value: 'Send the latest news to all registered channels and users for testing.' },
+                        { name: '!newshelp', value: 'Show this help message with all commands.' }
                     );
                 message.reply({ embeds: [helpEmbed] });
                 break;
