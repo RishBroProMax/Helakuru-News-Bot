@@ -23,7 +23,7 @@
 - **Flexible Setup:** Easy to configure with simple commands and built-in error handling.
 
 ### Commands 📕
-<p align="center">
+
 | Command             | Description                                               |
 |---------------------|-----------------------------------------------------------|
 | `!setnews`          | Sets the current channel to receive news updates (Admin). |
