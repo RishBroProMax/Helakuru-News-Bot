@@ -1,5 +1,7 @@
 # Helakuru News Bot V1.2 📢
 
+## [Add Me to Your Server](https://discord.com/oauth2/authorize?client_id=1306259513090769027&permissions=277025392704&integration_type=0&scope=bot)
+
 <p>Stay up-to-date with the latest news from Helakuru Esana directly on your Discord server! This bot automatically fetches and shares real-time news updates, complete with images, summaries, and links to full articles. Perfect for keeping your community informed and engaged with important updates.</p>
 
 ## Features 🚀
