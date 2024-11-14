@@ -15,3 +15,8 @@
 <li>Platform: Discord.js v14, powered by Node.js.</li>
 <li>Hosting: Deployable on various cloud platforms like Heroku, Vercel, or DigitalOcean.</li>
 <li>Dependencies: axios, cheerio, node-cron</li>
+
+## Credits ❤
+
+<li>Rishmika Sandanu ( Developer )</li> 
+<li>Helakuru Esana Web</li>
