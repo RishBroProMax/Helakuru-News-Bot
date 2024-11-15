@@ -25,9 +25,8 @@ function readJsonFileSync(filePath) {
         if (fs.existsSync(filePath)) {
             const data = fs.readFileSync(filePath, 'utf8');
             return data ? JSON.parse(data) : {};
-        } else {
-            return {};
         }
+        return {};
     } catch (error) {
         console.error(`Error reading ${filePath}:`, error);
         return {};
@@ -45,14 +44,14 @@ function saveData(filePath, data) {
 const sentNews = new Set(fs.existsSync(newsFile) ? fs.readFileSync(newsFile, 'utf8').split('\n') : []);
 const serverChannels = readJsonFileSync(serverChannelsFile);
 const userNotifications = readJsonFileSync(userNotificationsFile);
-let lastNewsId = 106210;
+let lastNewsId = 106222;
 
 client.once('ready', async () => {
-    console.log(`✅ ${client.user.tag} is online and ready to send Helakuru Esana News 📰`);
+    console.log(`✅ ${client.user.tag} is online and monitoring Helakuru Esana news.`);
     client.user.setActivity('Helakuru Esana News 📰', { type: 'WATCHING' });
 
     const owner = await client.users.fetch(OWNER_ID);
-    await owner.send(`✅ ${client.user.tag} is online and monitoring Helakuru Esana news.`);
+    owner.send(`✅ ${client.user.tag} is online and actively monitoring Helakuru Esana news updates.`);
 });
 
 async function fetchLatestNews(sendToAll = true) {
@@ -69,7 +68,6 @@ async function fetchLatestNews(sendToAll = true) {
             const newsContent = $('meta[property="og:description"]').attr('content') || "No content available.";
             let newsImage = $('meta[property="og:image"]').attr('content') || "";
 
-            // Automatically remove thumbnail if it fails to load
             if (!newsImage) {
                 console.log('⚠️ No valid thumbnail found. Removing thumbnail.');
                 newsImage = null;
@@ -109,6 +107,7 @@ async function fetchLatestNews(sendToAll = true) {
 }
 
 async function sendNewsToChannelsAndUsers(embed, row) {
+    console.log('🚀 Sending news update to all channels and users.');
     for (const guildId in serverChannels) {
         try {
             const channel = await client.channels.fetch(serverChannels[guildId]);
@@ -179,7 +178,7 @@ client.on('interactionCreate', async (interaction) => {
     } else if (commandName === 'help') {
         const helpEmbed = new EmbedBuilder()
             .setTitle('📢 Helakuru Esana News Bot Commands')
-            .setColor('#0099ff')
+            .setColor('#ff1100')
             .setDescription('Stay informed with real-time updates from Helakuru Esana!')
             .addFields(
                 { name: '/setnews', value: 'Set this channel to receive news updates (admin only).' },
@@ -190,7 +189,8 @@ client.on('interactionCreate', async (interaction) => {
                 { name: '/help', value: 'Show this help message with all commands.' },
                 { name: '/news', value: 'Fetch the latest news manually.' },
                 { name: '/invite', value: 'Get the invite link to add the bot to your server.' }
-            );
+            )
+            .setFooter({ text: 'Helakuru Esana News • Stay informed! | ⚡ Powerd By ImRishmika' });
         interaction.reply({ embeds: [helpEmbed] });
     } else if (commandName === 'news') {
         const latestNews = await fetchLatestNews(false);
@@ -198,48 +198,17 @@ client.on('interactionCreate', async (interaction) => {
         else interaction.reply('⚠️ No new news updates available at the moment. All Latest News Are Sended');
     } else if (commandName === 'console' && interaction.user.id === OWNER_ID) {
         const consoleLines = fs.readFileSync('./console.log', 'utf8').split('\n').slice(-50).join('\n');
-        interaction.reply(`\`\`\`${consoleLines}\`\`\``);
+        interaction.reply(`\`${consoleLines}\``);
     } else if (commandName === 'invite') {
-        const inviteLink = 'https://discord.com/oauth2/authorize?client_id=1306259513090769027&permissions=277025392704&integration_type=0&scope=bot';
-        interaction.reply(`✅ [Click here to invite the bot to your server!](${inviteLink})`);
-    }
-});
-
-// Auto-clean up and register only active slash commands globally
-client.once('ready', async () => {
-    const commands = [
-        new SlashCommandBuilder().setName('setnews').setDescription('🚧 Set this channel to receive news updates'),
-        new SlashCommandBuilder().setName('removenews').setDescription('💥 Remove news updates from this channel'),
-        new SlashCommandBuilder().setName('newsnotify').setDescription('🔔 Enable or disable direct message notifications'),
-        new SlashCommandBuilder().setName('newsstatus').setDescription('📡 Show current bot configuration and news update status'),
-        new SlashCommandBuilder().setName('ping').setDescription('🎊 Check bot latency'),
-        new SlashCommandBuilder().setName('help').setDescription('🆘 Show help information for all commands'),
-        new SlashCommandBuilder().setName('news').setDescription('🔰 Fetch the latest news manually'),
-        new SlashCommandBuilder().setName('invite').setDescription('✔ Get the bot invite link')
-    ];
-    await client.application.commands.set(commands);
-    console.log('✅ Slash commands registered globally.');
-});
-
-client.on('messageCreate', async (message) => {
-    if (message.channel.type === 'DM' && !message.author.bot && !userNotifications[message.author.id]) {
-        userNotifications[message.author.id] = true;
-
-        const embed = new EmbedBuilder()
-            .setTitle('👋 Welcome to Helakuru Esana News Bot!')
-            .setDescription('Get real-time news updates right here on Discord! Click below for more options. Use /help')
-            .setColor('#00bfff')
-            .setFooter({ text: '🎉Thank you for subscribing!' });
-
-        const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setLabel('Help')
-                .setStyle(ButtonStyle.Primary)
-                .setCustomId('help')
-        );
-
-        await message.author.send({ embeds: [embed], components: [row] });
+        const inviteEmbed = new EmbedBuilder()
+            .setTitle('✨ Invite Helakuru Esana News Bot')
+            .setColor('#ff1100')
+            .setDescription(`Add the bot to your server and stay updated with Helakuru Esana news!`)
+            .setURL('https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot');
+        interaction.reply({ embeds: [inviteEmbed] });
     }
 });
 
 client.login(BOT_TOKEN);
+
+cron.schedule('*/10 * * * * *', fetchLatestNews);
