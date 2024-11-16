@@ -1,3 +1,6 @@
+// Helakuru News Bot V1.5 Alpha Version
+// Copyright Reserved By RishBroProMax © Github
+
 const {
     Client,
     GatewayIntentBits,
@@ -34,7 +37,7 @@ client.commands = new Collection();
 const sentNews = new Set(fs.existsSync(newsFile) ? fs.readFileSync(newsFile, 'utf8').split('\n') : []);
 const serverChannels = readJsonFileSync(serverChannelsFile);
 const userNotifications = readJsonFileSync(userNotificationsFile);
-let lastNewsId = 106250;
+let lastNewsId = 106268;
 
 // Helper Functions
 function readJsonFileSync(filePath) {
@@ -109,7 +112,7 @@ async function fetchLatestNews(sendToAll = true) {
                     .setDescription(`${newsContent}\n\n[Read More 📕](${newsUrl})`)
                     .setColor('#ff1100')
                     .setTimestamp()
-                    .setFooter({ text: 'Helakuru Esana News • Stay informed! | Powerd By ImRishmika' });
+                    .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
                 if (newsImage) embed.setImage(newsImage);
 
                 const row = new ActionRowBuilder().addComponents(
@@ -194,7 +197,8 @@ client.on('interactionCreate', async (interaction) => {
             .addFields(
                 { name: 'Registered Channels', value: Object.keys(serverChannels).length > 0 ? Object.values(serverChannels).join(', ') : 'None' },
                 { name: 'Users Receiving DMs', value: Object.keys(userNotifications).length > 0 ? Object.keys(userNotifications).join(', ') : 'None' }
-            );
+            )
+        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' }):
         interaction.reply({ embeds: [statusEmbed] });
     } else if (commandName === 'ping') {
         interaction.reply(`🏓 Pong! Bot latency: ${Date.now() - interaction.createdTimestamp}ms.`);
@@ -212,7 +216,8 @@ client.on('interactionCreate', async (interaction) => {
                 { name: '/help', value: 'Show this help message with all commands.' },
                 { name: '/news', value: 'Fetch the latest news manually.' },
                 { name: '/invite', value: 'Get the invite link to add the bot to your server.' }
-            );
+            )
+        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
         interaction.reply({ embeds: [helpEmbed] });
     } else if (commandName === 'news') {
         const latestNews = await fetchLatestNews(true); // Now sends to all users
@@ -223,7 +228,8 @@ client.on('interactionCreate', async (interaction) => {
             .setTitle('✨ Invite Helakuru Esana News Bot')
             .setColor('#ff1100')
             .setDescription('Add the bot to your server and stay updated with Helakuru Esana news!')
-            .setURL('https://discord.com/api/oauth2/authorize?client_id=CLIENT_ID&permissions=8&scope=bot');
+            .setURL('https://discord.com/api/oauth2/authorize?client_id=1306259513090769027&permissions=8&scope=bot')
+        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
         interaction.reply({ embeds: [inviteEmbed] });
     } else if (commandName === 'controlpanel') {
         if (interaction.user.id === OWNER_ID) {
@@ -272,20 +278,67 @@ client.on('interactionCreate', async (buttonInteraction) => {
         delete userNotifications[userId];
         saveData(userNotificationsFile, userNotifications);
         await buttonInteraction.reply('🔕 Notifications disabled! You will no longer receive news updates via DM.');
-    } else if (buttonInteraction.customId === 'set_online' && userId === OWNER_ID) {
-        await client.user.setStatus('online');
+    }  else if (buttonInteraction.customId === 'set_online' && userId === OWNER_ID) {
+        client.user.setStatus('online');
         await buttonInteraction.reply('✅ Bot status set to **Online**.');
     } else if (buttonInteraction.customId === 'set_idle' && userId === OWNER_ID) {
-        await client.user.setStatus('idle');
-        await buttonInteraction.reply('✅ Bot status set to **Idle**.');
+        client.user.setStatus('idle');
+        await buttonInteraction.reply('⚠️ Bot status set to **Idle**.');
     } else if (buttonInteraction.customId === 'set_dnd' && userId === OWNER_ID) {
-        await client.user.setStatus('dnd');
-        await buttonInteraction.reply('✅ Bot status set to **Do Not Disturb**.');
+        client.user.setStatus('dnd');
+        await buttonInteraction.reply('⛔ Bot status set to **Do Not Disturb**.');
     } else if (buttonInteraction.customId === 'show_status' && userId === OWNER_ID) {
-        const status = client.user.presence.status;
-        await buttonInteraction.reply(`📊 Current bot status: **${status.toUpperCase()}**`);
+        const status = client.user.presence?.status || 'unknown';
+        await buttonInteraction.reply(`📊 Current bot status: **${status}**.`);
+    } else {
+        await buttonInteraction.reply({ content: '❌ You are not authorized to use this action.', ephemeral: true });
     }
 });
+
+// Rate Limitation Disabler
+
+// Handle rate limits
+client.on('rateLimit', (info) => {
+    console.warn('⚠️ Bot is being rate-limited:', info);
+
+    // Implement a backoff strategy
+    const retryAfter = info.timeout || 5000; // Default to 5 seconds if not specified
+    console.log(`⏳ Waiting ${retryAfter / 1000} seconds before retrying...`);
+    
+    setTimeout(() => {
+        console.log('🔄 Retrying after rate limit...');
+    }, retryAfter);
+});
+
+// Handle invalid token or connection issues
+client.on('error', (error) => {
+    if (error.message.includes('Invalid token')) {
+        console.error('❌ Invalid token detected. The bot will not restart.');
+        // Optionally notify the bot owner
+        client.users.fetch(OWNER_ID).then((owner) => {
+            owner.send('❌ The bot token is invalid. Please check and update the token.');
+        });
+    } else {
+        console.error('⚠️ An error occurred:', error);
+    }
+});
+
+// Prevent bot from crashing on unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('🚨 Unhandled Promise Rejection at:', promise, 'reason:', reason);
+    // Keep the bot running
+});
+
+// Prevent bot from exiting on other uncaught exceptions
+process.on('uncaughtException', (error) => {
+    console.error('🚨 Uncaught Exception:', error);
+    // Optionally notify the owner or log to an external service
+    client.users.fetch(OWNER_ID).then((owner) => {
+        owner.send('🚨 An uncaught exception occurred. The bot is still running.');
+    });
+});
+
+
 
 // Cron Job
 cron.schedule('*/10 * * * *', fetchLatestNews);
