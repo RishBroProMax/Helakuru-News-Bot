@@ -50,6 +50,16 @@ Once the setup is done, your server will start receiving **Helakuru Esana** news
   <img src="https://top.gg/api/widget/1306259513090769027.svg">
 </a>
 
+## Star History 🌟
+<a href="https://star-history.com/#RishBroProMax/Helakuru-News-Bot&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=RishBroProMax/Helakuru-News-Bot&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=RishBroProMax/Helakuru-News-Bot&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aRishBroProMax/Helakuru-News-Bot&type=Date" />
+ </picture>
+</a>
+
+
 ### Technical Details 🧑‍💻
 
 - **Platform:** Built with [Discord.js v14](https://discord.js.org) and powered by [Node.js](https://nodejs.org).
