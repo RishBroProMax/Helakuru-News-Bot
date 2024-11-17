@@ -44,6 +44,12 @@
 
 Once the setup is done, your server will start receiving **Helakuru Esana** news every 5 minutes! 🎉
 
+### 🎉 Vote now ( top.gg )
+
+<a href="https://top.gg/bot/1306259513090769027">
+  <img src="https://top.gg/api/widget/1306259513090769027.svg">
+</a>
+
 ### Technical Details 🧑‍💻
 
 - **Platform:** Built with [Discord.js v14](https://discord.js.org) and powered by [Node.js](https://nodejs.org).
