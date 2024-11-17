@@ -1,3 +1,4 @@
+// helakuru news bot
 const {
     Client,
     GatewayIntentBits,
