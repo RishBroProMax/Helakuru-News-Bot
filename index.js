@@ -1,4 +1,5 @@
 // helakuru news bot
+// V1.5 Alpha Beta 0.3
 const {
     Client,
     GatewayIntentBits,
