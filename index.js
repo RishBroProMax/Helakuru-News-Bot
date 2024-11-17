@@ -1,6 +1,3 @@
-// Helakuru News Bot V1.5 Alpha Version
-// Copyright Reserved By RishBroProMax © Github
-
 const {
     Client,
     GatewayIntentBits,
@@ -37,7 +34,7 @@ client.commands = new Collection();
 const sentNews = new Set(fs.existsSync(newsFile) ? fs.readFileSync(newsFile, 'utf8').split('\n') : []);
 const serverChannels = readJsonFileSync(serverChannelsFile);
 const userNotifications = readJsonFileSync(userNotificationsFile);
-let lastNewsId = 106268;
+let lastNewsId = 106274;
 
 // Helper Functions
 function readJsonFileSync(filePath) {
@@ -78,10 +75,52 @@ client.on('ready', async () => {
         new SlashCommandBuilder().setName('news').setDescription('📰 Fetch the latest news update manually'),
         new SlashCommandBuilder().setName('invite').setDescription('🔗 Get the invite link to add this bot to your server'),
         new SlashCommandBuilder().setName('controlpanel').setDescription('⚙️ Access bot control panel (Owner Only)'),
+        new SlashCommandBuilder().setName('vote').setDescription('📡Vote Me'),
+        new SlashCommandBuilder().setName('stats').setDescription('📊 Show Bot Status (Owner Only)'),
     ].map(command => command.toJSON());
 
     await client.application.commands.set(commands);
 });
+
+// Function to format uptime
+function formatUptime(ms) {
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+// Event: Interaction
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand() || interaction.commandName !== 'stats') return;
+
+    if (interaction.user.id !== OWNER_ID) {
+        return interaction.reply({ content: '❌ You are not authorized to use this command.', ephemeral: true });
+    }
+
+    const uptime = formatUptime(client.uptime);
+    const latency = Math.round(client.ws.ping);
+    const userCount = client.users.cache.size;
+    const channelCount = client.channels.cache.size;
+    const guildCount = client.guilds.cache.size;
+
+    const embed = new EmbedBuilder()
+        .setTitle('📊 Bot Statistics')
+        .setColor('#7289da')
+        .addFields(
+            { name: '🧩Uptime', value: uptime, inline: true },
+            { name: '🌏Latency', value: `${latency}ms`, inline: true },
+            { name: '👥Total Users', value: `${userCount}`, inline: true },
+            { name: '🎥Total Channels', value: `${channelCount}`, inline: true },
+            { name: '🌌Total Servers', value: `${guildCount}`, inline: true }
+        )
+        .setFooter({ text: '🔔 Helakuru News Bot V1.5 Alpha | Built By ImRishmika' })
+        .setTimestamp();
+
+    await interaction.reply({ embeds: [embed] });
+});
+
 
 // Fetch News and Send to Channels/Users
 async function fetchLatestNews(sendToAll = true) {
@@ -112,7 +151,7 @@ async function fetchLatestNews(sendToAll = true) {
                     .setDescription(`${newsContent}\n\n[Read More 📕](${newsUrl})`)
                     .setColor('#ff1100')
                     .setTimestamp()
-                    .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
+                    .setFooter({ text: 'Helakuru Esana News • Stay informed! | Powerd By ImRishmika' });
                 if (newsImage) embed.setImage(newsImage);
 
                 const row = new ActionRowBuilder().addComponents(
@@ -197,8 +236,7 @@ client.on('interactionCreate', async (interaction) => {
             .addFields(
                 { name: 'Registered Channels', value: Object.keys(serverChannels).length > 0 ? Object.values(serverChannels).join(', ') : 'None' },
                 { name: 'Users Receiving DMs', value: Object.keys(userNotifications).length > 0 ? Object.keys(userNotifications).join(', ') : 'None' }
-            )
-        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' }):
+            );
         interaction.reply({ embeds: [statusEmbed] });
     } else if (commandName === 'ping') {
         interaction.reply(`🏓 Pong! Bot latency: ${Date.now() - interaction.createdTimestamp}ms.`);
@@ -215,9 +253,9 @@ client.on('interactionCreate', async (interaction) => {
                 { name: '/ping', value: 'Check the bot latency.' },
                 { name: '/help', value: 'Show this help message with all commands.' },
                 { name: '/news', value: 'Fetch the latest news manually.' },
-                { name: '/invite', value: 'Get the invite link to add the bot to your server.' }
-            )
-        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
+                { name: '/invite', value: 'Get the invite link to add the bot to your server.' },
+                { name: '/status', value: 'Get the Full Status of The Bot ( Owner Only )' }
+            );
         interaction.reply({ embeds: [helpEmbed] });
     } else if (commandName === 'news') {
         const latestNews = await fetchLatestNews(true); // Now sends to all users
@@ -228,9 +266,16 @@ client.on('interactionCreate', async (interaction) => {
             .setTitle('✨ Invite Helakuru Esana News Bot')
             .setColor('#ff1100')
             .setDescription('Add the bot to your server and stay updated with Helakuru Esana news!')
-            .setURL('https://discord.com/api/oauth2/authorize?client_id=1306259513090769027&permissions=8&scope=bot')
-        .setFooter({ text: '🎊 Helakuru News Bot V1.5 Alpha • Stay informed! | Powerd By ImRishmika' });
+            .setURL('https://discord.com/api/oauth2/authorize?client_id=1306259513090769027&permissions=8&scope=bot');
         interaction.reply({ embeds: [inviteEmbed] });
+    } else if (commandName === 'vote') {
+        const inviteEmbed = new EmbedBuilder()
+            .setTitle('📚 Vote Me')
+            .setColor('#ff1100')
+            .setDescription('Vote For Get More Updates And News')
+            .setURL('https://top.gg/bot/1306259513090769027/vote');
+        interaction.reply({ embeds: [inviteEmbed] });
+    
     } else if (commandName === 'controlpanel') {
         if (interaction.user.id === OWNER_ID) {
             const controlPanelEmbed = new EmbedBuilder()
@@ -295,7 +340,7 @@ client.on('interactionCreate', async (buttonInteraction) => {
     }
 });
 
-// Rate Limitation Disabler
+// Rate Limitation
 
 // Handle rate limits
 client.on('rateLimit', (info) => {
@@ -341,6 +386,6 @@ process.on('uncaughtException', (error) => {
 
 
 // Cron Job
-cron.schedule('*/10 * * * *', fetchLatestNews);
+cron.schedule('*/5 * * * *', fetchLatestNews);
 
 client.login(BOT_TOKEN);
