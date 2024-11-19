@@ -1,4 +1,4 @@
-# <p align="center">Helakuru News Bot V1.4 Alpha 📢</p>
+# <p align="center">Helakuru News Bot V1.5 Alpha 📢</p>
 
 <p align="center">
   <img src="logo.jpg" alt="Helakuru News Bot Logo" width="250" height="250" style="border-radius: 50%;" />
