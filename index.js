@@ -78,6 +78,8 @@ client.on('ready', async () => {
         new SlashCommandBuilder().setName('invite').setDescription('🔗 Get the invite link to add this bot to your server'),
         new SlashCommandBuilder().setName('controlpanel').setDescription('⚙️ Access bot control panel (Owner Only)'),
         new SlashCommandBuilder().setName('vote').setDescription('📡Vote Me'),
+        new SlashCommandBuilder().setName('relese').setDescription('🎄 **Christmas Update Relese Notes** 🎅'),
+        new SlashCommandBuilder().setName('christmas').setDescription('🎄 **Christmas Update** 🎅'),
         new SlashCommandBuilder().setName('stats').setDescription('📊 Show Bot Status (Owner Only)'),
     ].map(command => command.toJSON());
 
@@ -720,33 +722,31 @@ startAdInterval();
 
 // Christmas Game
 client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (interaction.isCommand()) {
+        const { commandName } = interaction;
 
-    const { commandName } = interaction;
+        if (commandName === 'christmas') {
+            const gameEmbed = new MessageEmbed()
+                .setTitle('🎄 Guess the Gift 🎁')
+                .setDescription('Guess which gift contains the special surprise! Click a button to make your guess.')
+                .setColor('#ff1100');
 
-    if (commandName === '!christmas') {
-        const gameEmbed = new MessageEmbed()
-            .setTitle('🎄 Guess the Gift 🎁')
-            .setDescription('Guess which gift contains the special surprise! Click a button to make your guess.')
-            .setColor('#ff1100');
+            const row = new MessageActionRow().addComponents(
+                new MessageButton().setCustomId('gift1').setLabel('🎁 Gift 1').setStyle('PRIMARY'),
+                new MessageButton().setCustomId('gift2').setLabel('🎁 Gift 2').setStyle('PRIMARY'),
+                new MessageButton().setCustomId('gift3').setLabel('🎁 Gift 3').setStyle('PRIMARY')
+            );
 
-        const row = new MessageActionRow().addComponents(
-            new MessageButton().setCustomId('gift1').setLabel('🎁 Gift 1').setStyle('PRIMARY'),
-            new MessageButton().setCustomId('gift2').setLabel('🎁 Gift 2').setStyle('PRIMARY'),
-            new MessageButton().setCustomId('gift3').setLabel('🎁 Gift 3').setStyle('PRIMARY')
-        );
-
-        await interaction.reply({ embeds: [gameEmbed], components: [row] });
+            await interaction.reply({ embeds: [gameEmbed], components: [row] });
+        }
     }
-});
 
-client.on('interactionCreate', async (interaction) => {
-    if (!interaction.isButton()) return;
+    if (interaction.isButton()) {
+        const gifts = ['🎉 You found the special surprise!', '🎁 Try again!', '🎁 Try again!'];
+        const randomGift = gifts[Math.floor(Math.random() * gifts.length)];
 
-    const gifts = ['🎉 You found the special surprise!', '🎁 Try again!', '🎁 Try again!'];
-    const randomGift = gifts[Math.floor(Math.random() * gifts.length)];
-
-    await interaction.reply(randomGift);
+        await interaction.reply(randomGift);
+    }
 });
 
 // Automatic Christmas Greeting
@@ -781,7 +781,7 @@ async function sendChristmasGreeting() {
 
 // Release Notes for Christmas
 client.on('messageCreate', async (message) => {
-    if (message.content === '!release') {
+    if (message.content === 'release') {
         const releaseEmbed = new MessageEmbed()
             .setTitle('🎄 Christmas Update 🎅')
             .setDescription('We are excited to announce our new Christmas features!')
@@ -794,11 +794,9 @@ client.on('messageCreate', async (message) => {
 
         await message.channel.send({ embeds: [releaseEmbed] });
     }
-});
 
-// Command to explore Christmas features
-client.on('messageCreate', async (message) => {
-    if (message.content === '!christmas') {
+    // Command to explore Christmas features
+    if (message.content === 'christmas') {
         const christmasEmbed = new MessageEmbed()
             .setTitle('🎄 Christmas Features 🎅')
             .setDescription('Explore all the Christmas-related features!')
@@ -811,7 +809,6 @@ client.on('messageCreate', async (message) => {
         await message.channel.send({ embeds: [christmasEmbed] });
     }
 });
-
 
 
 // Cron Job
