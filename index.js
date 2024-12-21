@@ -22,10 +22,10 @@ require('dotenv').config();
 
 const client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds, // For guild events
+        GatewayIntentBits.GuildMessages, // For receiving messages in guilds
+        GatewayIntentBits.MessageContent, // To allow reading message content
+        GatewayIntentBits.DirectMessages, // For DM messages
     ],
 });
 
