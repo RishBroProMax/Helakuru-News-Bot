@@ -410,6 +410,8 @@ client.on('interactionCreate', async (interaction) => {
                     { name: '/help', value: 'Show this help message with all commands.' },
                     { name: '/news', value: 'Fetch the latest news manually.' },
                     { name: '/invite', value: 'Get the invite link to add the bot to your server.' },
+                    { name: '!christmas', value: '🎄 **Christmas Update** 🎅' },
+                    { name: '!relese', value: '🎄 **Christmas Update Relese Notes** 🎅' },
                     { name: '/status', value: 'Get the Full Status of The Bot ( Owner Only )' }
                 );
             interaction.reply({ embeds: [helpEmbed] });
@@ -713,6 +715,102 @@ function startAdInterval() {
 
 // Start the ad interval if it's set
 startAdInterval();
+
+
+
+// Christmas Game
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === '!christmas') {
+        const gameEmbed = new MessageEmbed()
+            .setTitle('🎄 Guess the Gift 🎁')
+            .setDescription('Guess which gift contains the special surprise! Click a button to make your guess.')
+            .setColor('#ff1100');
+
+        const row = new MessageActionRow().addComponents(
+            new MessageButton().setCustomId('gift1').setLabel('🎁 Gift 1').setStyle('PRIMARY'),
+            new MessageButton().setCustomId('gift2').setLabel('🎁 Gift 2').setStyle('PRIMARY'),
+            new MessageButton().setCustomId('gift3').setLabel('🎁 Gift 3').setStyle('PRIMARY')
+        );
+
+        await interaction.reply({ embeds: [gameEmbed], components: [row] });
+    }
+});
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isButton()) return;
+
+    const gifts = ['🎉 You found the special surprise!', '🎁 Try again!', '🎁 Try again!'];
+    const randomGift = gifts[Math.floor(Math.random() * gifts.length)];
+
+    await interaction.reply(randomGift);
+});
+
+// Automatic Christmas Greeting
+client.on('ready', () => {
+    const now = new Date();
+    const christmasDate = new Date(now.getFullYear(), 11, 25); // December 25th
+
+    if (now.getMonth() === 11 && now.getDate() === 25) {
+        sendChristmasGreeting();
+    } else {
+        const timeUntilChristmas = christmasDate - now;
+        setTimeout(sendChristmasGreeting, timeUntilChristmas);
+    }
+});
+
+async function sendChristmasGreeting() {
+    const greetingEmbed = new MessageEmbed()
+        .setTitle('🎄 Merry Christmas! 🎅')
+        .setDescription('Wishing you a Merry Christmas and a Happy New Year! 🎁✨')
+        .setColor('#ff1100')
+        .setImage('https://example.com/christmas-image.gif'); // Replace with your festive media URL
+
+    for (const userId in userNotifications) {
+        try {
+            const user = await client.users.fetch(userId);
+            if (user) await user.send({ embeds: [greetingEmbed] });
+        } catch (error) {
+            console.error(`⚠️ Error sending Christmas greeting to user ${userId}:`, error);
+        }
+    }
+}
+
+// Release Notes for Christmas
+client.on('messageCreate', async (message) => {
+    if (message.content === '!release') {
+        const releaseEmbed = new MessageEmbed()
+            .setTitle('🎄 Christmas Update 🎅')
+            .setDescription('We are excited to announce our new Christmas features!')
+            .setColor('#ff1100')
+            .addFields(
+                { name: '🎁 Christmas Game', value: 'Play the "Guess the Gift" game and find the special surprise!' },
+                { name: '🎅 Automatic Christmas Greeting', value: 'Receive a personalized Merry Christmas message on December 25th!' }
+            )
+            .setFooter('Helakuru News Bot V1.6 Alpha Christmas Update 🎅🎄');
+
+        await message.channel.send({ embeds: [releaseEmbed] });
+    }
+});
+
+// Command to explore Christmas features
+client.on('messageCreate', async (message) => {
+    if (message.content === '!christmas') {
+        const christmasEmbed = new MessageEmbed()
+            .setTitle('🎄 Christmas Features 🎅')
+            .setDescription('Explore all the Christmas-related features!')
+            .setColor('#ff1100')
+            .addFields(
+                { name: '🎁 Christmas Game', value: 'Use `/christmas` to play the "Guess the Gift" game.' },
+                { name: '🎅 Automatic Christmas Greeting', value: 'Receive a personalized Merry Christmas message on December 25th!' }
+            );
+
+        await message.channel.send({ embeds: [christmasEmbed] });
+    }
+});
 
 
 
