@@ -7,6 +7,7 @@ const {
     ActionRowBuilder,
     ButtonBuilder,
     ButtonStyle,
+    Intents,
     MessageActionRow, 
     MessageButton,
     PermissionsBitField,
@@ -738,11 +739,12 @@ client.on('messageCreate', async (message) => {
                 .setColor('#ff1100');
 
             // Create buttons for the gifts
-            const row = new MessageActionRow().addComponents(
-                new MessageButton().setCustomId('gift1').setLabel('🎁 Gift 1').setStyle('PRIMARY'),
-                new MessageButton().setCustomId('gift2').setLabel('🎁 Gift 2').setStyle('PRIMARY'),
-                new MessageButton().setCustomId('gift3').setLabel('🎁 Gift 3').setStyle('PRIMARY')
-            );
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageButton().setCustomId('gift1').setLabel('🎁 Gift 1').setStyle('PRIMARY'),
+                    new MessageButton().setCustomId('gift2').setLabel('🎁 Gift 2').setStyle('PRIMARY'),
+                    new MessageButton().setCustomId('gift3').setLabel('🎁 Gift 3').setStyle('PRIMARY')
+                );
 
             // Send the embed and buttons to the channel
             await message.channel.send({ embeds: [gameEmbed], components: [row] });
